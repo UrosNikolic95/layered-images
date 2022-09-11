@@ -2,6 +2,13 @@ const images: HTMLImageElement[] = [];
 const n1 = 2;
 const n2 = Math.pow(2, n1);
 
+const imageSources: string[] = [
+  "../assets/image1.jpg",
+  "../assets/image2.jpg",
+  "../assets/image3.jpg",
+  "../assets/image4.jpg",
+];
+
 function getMasks() {
   const bin: boolean[][] = [];
   for (let i = 0; i < n2; i++) {
@@ -61,9 +68,23 @@ window.addEventListener("load", function () {
 const canvases: HTMLCanvasElement[] = [];
 let body: HTMLElement | null;
 
-function init() {
+async function init() {
   body = document.getElementById("body");
-  images.push(...document.getElementsByTagName("img"));
+  images.push(
+    ...imageSources.map((src) => {
+      const image = document.createElement("img");
+      image.hidden = true;
+      image.width = body?.clientWidth || 100;
+      image.height = body?.clientHeight || 100;
+      image.src = src;
+      body?.appendChild(image);
+      return image;
+    })
+  );
+
+  await Promise.all(
+    images.map((el) => new Promise((res) => (el.onload = res)))
+  );
 
   body?.addEventListener("mousedown", (event) => {
     selected.push(
