@@ -1,0 +1,22 @@
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+img {
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
