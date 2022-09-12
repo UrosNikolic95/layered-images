@@ -1,5 +1,5 @@
 const images: HTMLImageElement[] = [];
-const n1 = 2;
+const n1 = 3;
 const n2 = Math.pow(2, n1);
 
 const imageSources: string[] = [
@@ -7,6 +7,10 @@ const imageSources: string[] = [
   "../assets/image2.jpg",
   "../assets/image3.jpg",
   "../assets/image4.jpg",
+  "../assets/image5.jpg",
+  "../assets/image6.jpg",
+  "../assets/image7.jpg",
+  "../assets/image8.jpg",
 ];
 
 function getMasks() {
@@ -36,17 +40,20 @@ function getMasks() {
 
 const masks = getMasks();
 
-const points: IPoint[] = [
-  {
-    x: 100,
-    y: 100,
-  },
-  {
-    x: 200,
-    y: 100,
-  },
-];
-const radius = 100;
+function getStartingPoints() {
+  const points: IPoint[] = [];
+  for (let i = 0; i < n1; i++) {
+    points.push({
+      x: 100 + 100 * i,
+      y: 100,
+    });
+  }
+  return points;
+}
+
+const points: IPoint[] = getStartingPoints();
+
+const radius = 200;
 
 interface IPoint {
   x: number;
