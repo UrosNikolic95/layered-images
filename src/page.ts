@@ -84,7 +84,6 @@ async function init() {
       image.width = body?.clientWidth || 100;
       image.height = body?.clientHeight || 100;
       image.src = src;
-      body?.appendChild(image);
       return image;
     })
   );
