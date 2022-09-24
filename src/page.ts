@@ -51,7 +51,12 @@ function getStartingPoints() {
   return points;
 }
 
-const points: IPoint[] = getStartingPoints();
+type IPointData = {
+  current: IPoint;
+  start: IPoint | null;
+};
+
+const points: IPointData[] = [];
 
 const radius = 200;
 
@@ -66,7 +71,9 @@ function calculateDistance(pointA: IPoint, pointB: IPoint) {
   );
 }
 
-const selected: IPoint[] = [];
+const selected: IPointData[] = [];
+
+let startPanningPoint: IPoint | null = null;
 
 window.addEventListener("load", function () {
   init();
@@ -93,19 +100,29 @@ async function init() {
   );
 
   body?.addEventListener("mousedown", (event) => {
-    selected.push(
-      ...points.filter((point) => calculateDistance(point, event) < radius)
-    );
+    startPanningPoint = {
+      x: event.x,
+      y: event.y,
+    };
+    if (points)
+      selected.push(
+        ...points.filter(
+          (point) => calculateDistance(point.current, event) < radius
+        )
+      );
+    selected.forEach((el) => (el.start = { ...el.current }));
   });
   body?.addEventListener("mousemove", (event) => {
     selected.forEach((point) => {
-      point.x = event.x;
-      point.y = event.y;
+      if (!point.start || !startPanningPoint) return;
+      point.current.x = point.start.x + event.x - startPanningPoint.x;
+      point.current.y = point.start.y + event.y - startPanningPoint.y;
     });
     if (selected.length) render();
   });
 
   body?.addEventListener("mouseup", (event) => {
+    selected.forEach((el) => (el.start = null));
     selected.splice(0);
   });
 
@@ -125,13 +142,38 @@ function render() {
       canvas.width = body.clientWidth;
       canvas.height = body.clientHeight;
 
+      const center: IPoint = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+      };
+      const diameter = 100;
+      if (!points.length) {
+        const part = (2 * Math.PI) / n1;
+        for (let i = 0; i < n1; i++) {
+          points.push({
+            current: {
+              x: center.x + diameter * Math.cos(part * i),
+              y: center.y + diameter * Math.sin(part * i),
+            },
+            start: null,
+          });
+        }
+      }
+
       context.drawImage(images[i], 0, 0, canvas.width, canvas.height);
 
       masks[i].forEach((index) => {
         const point = points[index];
         context.globalCompositeOperation = "destination-out";
         context.beginPath();
-        context.arc(point.x, point.y, radius, 0, 2 * Math.PI, false);
+        context.arc(
+          point.current.x,
+          point.current.y,
+          radius,
+          0,
+          2 * Math.PI,
+          false
+        );
         context.fill();
         context.globalCompositeOperation = "destination-atop";
       });
