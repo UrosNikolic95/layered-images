@@ -77,6 +77,8 @@ let startPanningPoint: IPoint | null = null;
 
 window.addEventListener("load", function () {
   init();
+  initCreditsButton();
+  console.log(":");
 });
 
 const canvases: HTMLCanvasElement[] = [];
@@ -179,4 +181,26 @@ function render() {
       });
     }
   }
+}
+
+const displayBlock = "display: block;";
+const displayNone = "display: none;";
+
+function initCreditsButton() {
+  const creditsButton = document.getElementsByClassName("credits-button");
+  Array.from(creditsButton).forEach((el) => {
+    console.log("|");
+    el.addEventListener("click", () => {
+      console.log("?");
+      const credits = document.getElementsByClassName("credits");
+      Array.from(credits).forEach((el) => {
+        const val = el.getAttribute("style");
+        console.log(val);
+        el.setAttribute(
+          "style",
+          val == displayBlock ? displayNone : displayBlock
+        );
+      });
+    });
+  });
 }
