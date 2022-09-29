@@ -83,7 +83,7 @@ const canvases: HTMLCanvasElement[] = [];
 let body: HTMLElement | null;
 
 async function init() {
-  body = document.getElementById("body");
+  body = document.getElementById("images");
   images.push(
     ...imageSources.map((src) => {
       const image = document.createElement("img");
