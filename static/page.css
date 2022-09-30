@@ -78,3 +78,14 @@ body {
 .credits-button:active {
   background-color: rgb(58, 119, 99);
 }
+
+.instructions {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  border-radius: 10px;
+  background-color: aquamarine;
+}
+.instructions p {
+  margin: 5px;
+}
