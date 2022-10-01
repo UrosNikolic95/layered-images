@@ -58,7 +58,7 @@ type IPointData = {
 
 const points: IPointData[] = [];
 
-const radius = 200;
+let radius = 200;
 
 interface IPoint {
   x: number;
@@ -101,7 +101,7 @@ async function init() {
     images.map((el) => new Promise((res) => (el.onload = res)))
   );
 
-  body?.addEventListener("mousedown", (event) => {
+  const mousedown = (event: { x: number; y: number }) => {
     startPanningPoint = {
       x: event.x,
       y: event.y,
@@ -113,20 +113,40 @@ async function init() {
         )
       );
     selected.forEach((el) => (el.start = { ...el.current }));
-  });
-  body?.addEventListener("mousemove", (event) => {
+  };
+
+  body?.addEventListener("mousedown", mousedown);
+  body?.addEventListener("touchstart", (touch) =>
+    mousedown({
+      x: touch.touches[0].clientX,
+      y: touch.touches[0].clientY,
+    })
+  );
+
+  const mousemove = (event: { x: number; y: number }) => {
     selected.forEach((point) => {
       if (!point.start || !startPanningPoint) return;
       point.current.x = point.start.x + event.x - startPanningPoint.x;
       point.current.y = point.start.y + event.y - startPanningPoint.y;
     });
     if (selected.length) render();
-  });
+  };
 
-  body?.addEventListener("mouseup", (event) => {
+  body?.addEventListener("mousemove", mousemove);
+  body?.addEventListener("touchmove", (touch) =>
+    mousemove({
+      x: touch.touches[0].clientX,
+      y: touch.touches[0].clientY,
+    })
+  );
+
+  const mouseup = () => {
     selected.forEach((el) => (el.start = null));
     selected.splice(0);
-  });
+  };
+
+  body?.addEventListener("mouseup", mouseup);
+  body?.addEventListener("touchend", mouseup);
 
   for (let i = 0; i < n2; i++) {
     const canvas = document.createElement("canvas") as HTMLCanvasElement;
@@ -143,6 +163,7 @@ function render() {
     if (context && body) {
       canvas.width = body.clientWidth;
       canvas.height = body.clientHeight;
+      radius = (body.clientWidth * 10) / 100;
 
       const center: IPoint = {
         x: canvas.width / 2,
